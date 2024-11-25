@@ -17,5 +17,5 @@ jobs:
           # version: 0.10.0
       - uses: actions/checkout@v4
       - name: Run shellcheck
-        run: shellcheck -d .
+        run: shellcheck script.sh
 ```
