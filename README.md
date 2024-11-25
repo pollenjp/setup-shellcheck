@@ -14,6 +14,7 @@ jobs:
       - uses: pollenjp/setup-shellcheck@v1
         with:
           version: latest
+          # version: 0.10.0
       - uses: actions/checkout@v4
       - name: Run shellcheck
         run: shellcheck -d .
