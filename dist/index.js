@@ -28405,7 +28405,7 @@ const setupShellcheck = async () => {
         core.info(`Downloading from ${downloadUrl}`);
         const downloadPath = await tc.downloadTool(downloadUrl);
         const extractedPath = await tc.extractTar(downloadPath, undefined, ['x']);
-        toolPath = await tc.cacheDir(`${extractedPath}`, constants_1.CMD_NAME, constants_1.TOOL_CACHE_NAME, version);
+        toolPath = await tc.cacheDir(`${extractedPath}`, constants_1.TOOL_CACHE_NAME, version, translateArchToDistArchName());
         core.info(`Downloaded to ${toolPath}`);
     }
     const binPath = `${toolPath}/${constants_1.CMD_NAME}-v${version}`;

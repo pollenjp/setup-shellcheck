@@ -23,9 +23,9 @@ export const setupShellcheck = async (): Promise<void> => {
     const extractedPath = await tc.extractTar(downloadPath, undefined, ['x'])
     toolPath = await tc.cacheDir(
       `${extractedPath}`,
-      CMD_NAME,
       TOOL_CACHE_NAME,
-      version
+      version,
+      translateArchToDistArchName()
     )
     core.info(`Downloaded to ${toolPath}`)
   }
