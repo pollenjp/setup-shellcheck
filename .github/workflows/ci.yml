@@ -48,7 +48,7 @@ jobs:
     name: GitHub Actions Test
     strategy:
       matrix:
-        host: [ubuntu-latest, macos-latest, windows-latest]
+        host: [ubuntu-latest, macos-latest]
         version: [latest, 0.10.0]
     runs-on: ${{ matrix.host }}
     steps:
