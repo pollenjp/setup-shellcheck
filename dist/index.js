@@ -28428,6 +28428,8 @@ const getVersion = async (version) => {
                     }
                     catch (error) {
                         core.warning(`Failed to get the latest version of ${constants_1.CMD_NAME}. (${error.message}) Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
+                        // sleep 2 seconds
+                        await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 }
                 throw new Error(`Failed to get the latest version of ${constants_1.CMD_NAME}.`);
@@ -28435,7 +28437,7 @@ const getVersion = async (version) => {
             const releaseResponse = (await response.json());
             const tagName = releaseResponse.tag_name;
             if (typeof tagName !== 'string') {
-                throw new Error(`Failed to get the latest version of ${constants_1.CMD_NAME}.`);
+                throw new Error(`Invalid type of tag name.`);
             }
             return tagName.replace(/^v/, '');
         }

@@ -57,15 +57,18 @@ const getVersion = async (version: string): Promise<string> => {
             core.warning(
               `Failed to get the latest version of ${CMD_NAME}. (${(error as Error).message}) Retry... ${i + 1}/${RETRY_COUNT}`
             )
+
+            // sleep 2 seconds
+            await new Promise(resolve => setTimeout(resolve, 2000))
           }
         }
         throw new Error(`Failed to get the latest version of ${CMD_NAME}.`)
       })()
       const releaseResponse: ReleaseResponse =
         (await response.json()) as ReleaseResponse
-      const tagName: string = releaseResponse.tag_name
+      const tagName = releaseResponse.tag_name
       if (typeof tagName !== 'string') {
-        throw new Error(`Failed to get the latest version of ${CMD_NAME}.`)
+        throw new Error(`Invalid type of tag name.`)
       }
       return tagName.replace(/^v/, '')
     }
