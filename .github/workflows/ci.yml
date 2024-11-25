@@ -53,11 +53,13 @@ jobs:
     runs-on: ${{ matrix.host }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./
+      - name: Install
+        uses: ./
         with:
           version: ${{ matrix.version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: ./ # Check using cache by watching logs
+      - name: Detect cached
+        uses: ./ # Check using cache by watching logs
         with:
           version: ${{ matrix.version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
