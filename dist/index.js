@@ -28424,11 +28424,14 @@ const getVersion = async (version) => {
             const response = await (async () => {
                 for (let i = 0; i < constants_1.RETRY_COUNT; i++) {
                     try {
-                        return await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
+                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
+                        if (!res.ok) {
+                            throw new Error(`Fetching the latest release page (${res.statusText})`);
+                        }
+                        return res;
                     }
                     catch (error) {
-                        core.warning(`Failed to get the latest version of ${constants_1.CMD_NAME}. (${error.message}) Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
-                        // sleep 2 seconds
+                        core.warning(`${error.message} Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
                         await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 }
