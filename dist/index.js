@@ -28302,9 +28302,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionInput = void 0;
+exports.githubTokenInput = exports.versionInput = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 exports.versionInput = core.getInput('version');
+exports.githubTokenInput = core.getInput('github_token');
 
 
 /***/ }),
@@ -28424,8 +28425,14 @@ const getVersion = async (version) => {
             const response = await (async () => {
                 for (let i = 0; i < constants_1.RETRY_COUNT; i++) {
                     try {
-                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
-                        if (!res.ok) {
+                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`, {
+                            headers: inputs_1.githubTokenInput
+                                ? {
+                                    Authorization: `Bearer ${inputs_1.githubTokenInput}`
+                                }
+                                : undefined
+                        });
+                        if (res.status !== 200) {
                             throw new Error(`Fetching the latest release page (${res.statusText})`);
                         }
                         return res;

@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as os from 'os'
-import { versionInput } from './inputs'
+import { versionInput, githubTokenInput } from './inputs'
 import {
   CMD_NAME,
   OWNER,
@@ -51,9 +51,17 @@ const getVersion = async (version: string): Promise<string> => {
         for (let i = 0; i < RETRY_COUNT; i++) {
           try {
             const res = await fetch(
-              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`
+              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`,
+              {
+                headers: githubTokenInput
+                  ? {
+                      Authorization: `Bearer ${githubTokenInput}`
+                    }
+                  : undefined
+              }
             )
-            if (!res.ok) {
+
+            if (res.status !== 200) {
               throw new Error(
                 `Fetching the latest release page (${res.statusText})`
               )
