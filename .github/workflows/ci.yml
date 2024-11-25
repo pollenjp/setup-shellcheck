@@ -46,19 +46,15 @@ jobs:
 
   test-action:
     name: GitHub Actions Test
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        host: [ubuntu-latest, macos-latest, windows-latest]
+        version: [latest, 0.10.0]
+    runs-on: ${{ matrix.host }}
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-
-      - name: Test Local Action
-        id: test-action
-        uses: ./
+      - uses: actions/checkout@v4
+      - uses: ./
         with:
-          milliseconds: 2000
-
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+          version: ${{ matrix.version }}
+      - name: check
+        run: shellcheck --version

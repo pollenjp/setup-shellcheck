@@ -1,16 +1,16 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
-  "author": "",
+  "name": "setup-shellcheck",
+  "description": "Install shellcheck and cache it for GitHub Actions",
+  "version": "1.0.0",
+  "author": "pollenJP",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/pollenjp/setup-shellcheck",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/pollenjp/setup-shellcheck.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/pollenjp/setup-shellcheck/issues"
   },
   "keywords": [
     "actions",
@@ -67,7 +67,8 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "^1.11.1"
+    "@actions/core": "^1.11.1",
+    "@actions/tool-cache": "^2.0.1"
   },
   "devDependencies": {
     "@github/local-action": "^2.2.0",
