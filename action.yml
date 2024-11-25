@@ -11,6 +11,11 @@ inputs:
     description: 'shellcheck version'
     required: true
     default: 'latest'
+  github_token:
+    description: 'GitHub token'
+    required: false
+    default: ''
+
 runs:
   using: node20
   main: dist/index.js

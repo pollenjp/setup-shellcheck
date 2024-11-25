@@ -28302,9 +28302,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionInput = void 0;
+exports.githubTokenInput = exports.versionInput = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 exports.versionInput = core.getInput('version');
+exports.githubTokenInput = core.getInput('github_token');
 
 
 /***/ }),
@@ -28405,7 +28406,7 @@ const setupShellcheck = async () => {
         core.info(`Downloading from ${downloadUrl}`);
         const downloadPath = await tc.downloadTool(downloadUrl);
         const extractedPath = await tc.extractTar(downloadPath, undefined, ['x']);
-        toolPath = await tc.cacheDir(`${extractedPath}`, constants_1.CMD_NAME, constants_1.TOOL_CACHE_NAME, version);
+        toolPath = await tc.cacheDir(`${extractedPath}`, constants_1.TOOL_CACHE_NAME, version, translateArchToDistArchName());
         core.info(`Downloaded to ${toolPath}`);
     }
     const binPath = `${toolPath}/${constants_1.CMD_NAME}-v${version}`;
@@ -28424,15 +28425,24 @@ const getVersion = async (version) => {
             const response = await (async () => {
                 for (let i = 0; i < constants_1.RETRY_COUNT; i++) {
                     try {
-                        return await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
+                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`, {
+                            headers: inputs_1.githubTokenInput
+                                ? {
+                                    Authorization: `Bearer ${inputs_1.githubTokenInput}`
+                                }
+                                : undefined
+                        });
+                        if (res.status !== 200) {
+                            throw new Error(`Fetching the latest release page (${res.statusText})`);
+                        }
+                        return res;
                     }
                     catch (error) {
-                        core.warning(`Failed to get the latest version of ${constants_1.CMD_NAME}. (${error.message}) Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
-                        // sleep 2 seconds
+                        core.warning(`${error.message} Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
                         await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 }
-                throw new Error(`Failed to get the latest version of ${constants_1.CMD_NAME}.`);
+                throw new Error(`Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`);
             })();
             const releaseResponse = (await response.json());
             const tagName = releaseResponse.tag_name;

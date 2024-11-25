@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as os from 'os'
-import { versionInput } from './inputs'
+import { versionInput, githubTokenInput } from './inputs'
 import {
   CMD_NAME,
   OWNER,
@@ -23,9 +23,9 @@ export const setupShellcheck = async (): Promise<void> => {
     const extractedPath = await tc.extractTar(downloadPath, undefined, ['x'])
     toolPath = await tc.cacheDir(
       `${extractedPath}`,
-      CMD_NAME,
       TOOL_CACHE_NAME,
-      version
+      version,
+      translateArchToDistArchName()
     )
     core.info(`Downloaded to ${toolPath}`)
   }
@@ -50,23 +50,36 @@ const getVersion = async (version: string): Promise<string> => {
       const response = await (async () => {
         for (let i = 0; i < RETRY_COUNT; i++) {
           try {
-            return await fetch(
-              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`
+            const res = await fetch(
+              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`,
+              {
+                headers: githubTokenInput
+                  ? {
+                      Authorization: `Bearer ${githubTokenInput}`
+                    }
+                  : undefined
+              }
             )
+            if (res.status !== 200) {
+              throw new Error(
+                `Fetching the latest release page (${res.statusText})`
+              )
+            }
+            return res
           } catch (error) {
             core.warning(
-              `Failed to get the latest version of ${CMD_NAME}. (${(error as Error).message}) Retry... ${i + 1}/${RETRY_COUNT}`
+              `${(error as Error).message} Retry... ${i + 1}/${RETRY_COUNT}`
             )
-
-            // sleep 2 seconds
             await new Promise(resolve => setTimeout(resolve, 2000))
           }
         }
-        throw new Error(`Failed to get the latest version of ${CMD_NAME}.`)
+        throw new Error(
+          `Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`
+        )
       })()
       const releaseResponse: ReleaseResponse =
         (await response.json()) as ReleaseResponse
-      const tagName = releaseResponse.tag_name
+      const tagName: string = releaseResponse.tag_name
       if (typeof tagName !== 'string') {
         throw new Error(`Invalid type of tag name.`)
       }
