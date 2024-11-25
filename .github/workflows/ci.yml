@@ -58,3 +58,20 @@ jobs:
           version: ${{ matrix.version }}
       - name: check
         run: shellcheck --version
+  test-cache:
+    name: Cache Test
+    strategy:
+      matrix:
+        host: [ubuntu-latest, macos-latest]
+        version: [0.10.0]
+    runs-on: ${{ matrix.host }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          version: ${{ matrix.version }}
+      - uses: ./
+        with:
+          version: ${{ matrix.version }}
+      - name: check
+        run: shellcheck --version
