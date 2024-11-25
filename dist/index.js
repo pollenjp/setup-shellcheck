@@ -28442,7 +28442,7 @@ const getVersion = async (version) => {
                         await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 }
-                throw new Error(`Failed to get the latest version of ${constants_1.CMD_NAME}.`);
+                throw new Error(`Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`);
             })();
             const releaseResponse = (await response.json());
             const tagName = releaseResponse.tag_name;

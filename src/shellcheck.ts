@@ -60,7 +60,6 @@ const getVersion = async (version: string): Promise<string> => {
                   : undefined
               }
             )
-
             if (res.status !== 200) {
               throw new Error(
                 `Fetching the latest release page (${res.statusText})`
@@ -74,7 +73,9 @@ const getVersion = async (version: string): Promise<string> => {
             await new Promise(resolve => setTimeout(resolve, 2000))
           }
         }
-        throw new Error(`Failed to get the latest version of ${CMD_NAME}.`)
+        throw new Error(
+          `Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`
+        )
       })()
       const releaseResponse: ReleaseResponse =
         (await response.json()) as ReleaseResponse
