@@ -45,8 +45,7 @@ interface ReleaseResponse {
 const getVersion = async (version: string): Promise<string> => {
   switch (version) {
     case 'latest': {
-      // curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r '.tag_name'
-
+      // curl -s https://api.github.com/repos/${OWNER}/${REPO}/releases/latest | jq -r '.tag_name'
       const response = await (async () => {
         for (let i = 0; i < RETRY_COUNT; i++) {
           try {
