@@ -19,3 +19,18 @@ jobs:
       - name: Run shellcheck
         run: shellcheck script.sh
 ```
+
+If you use self-hosted GitHub Enterprise, you should set `github-token` empty.
+
+```yaml
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pollenjp/setup-shellcheck@v1
+        with:
+          github-token: ''
+      - uses: actions/checkout@v4
+      - name: Run shellcheck
+        run: shellcheck script.sh
+```
