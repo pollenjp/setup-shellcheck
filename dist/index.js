@@ -28315,7 +28315,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.githubTokenInput = exports.versionInput = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 exports.versionInput = core.getInput('version');
-exports.githubTokenInput = core.getInput('github_token');
+exports.githubTokenInput = core.getInput('github-token');
 
 
 /***/ }),
@@ -28449,42 +28449,42 @@ exports.setupShellcheck = setupShellcheck;
  * @returns 'x.y.z'
  */
 const getVersion = async (version) => {
-    switch (version) {
-        case 'latest': {
-            // curl -s https://api.github.com/repos/${OWNER}/${REPO}/releases/latest | jq -r '.tag_name'
-            const response = await (async () => {
-                for (let i = 0; i < constants_1.RETRY_COUNT; i++) {
-                    try {
-                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`, {
-                            headers: inputs_1.githubTokenInput
-                                ? {
-                                    Authorization: `Bearer ${inputs_1.githubTokenInput}`
-                                }
-                                : undefined
-                        });
-                        if (res.status !== 200) {
-                            throw new Error(`Fetching the latest release page (${res.statusText})`);
-                        }
-                        return res;
-                    }
-                    catch (error) {
-                        core.warning(`${error.message} Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                    }
-                }
-                throw new Error(`Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`);
-            })();
-            const releaseResponse = (await response.json());
-            const tagName = releaseResponse.tag_name;
-            if (typeof tagName !== 'string') {
-                throw new Error(`Invalid type of tag name.`);
-            }
-            return tagName.replace(/^v/, '');
-        }
-        default:
-            return version;
+    if (version === 'latest') {
+        return await getLatestVersion(inputs_1.githubTokenInput);
     }
+    if (tc.isExplicitVersion(version)) {
+        core.debug(`Version ${version} is an explicit version.`);
+        return version;
+    }
+    throw new Error(`Invalid version: ${version}`);
 };
+/**
+ * Get the latest version. Support anonymous request.
+ * @param githubToken
+ * @returns 'X.Y.Z'
+ */
+async function getLatestVersion(githubToken) {
+    const response = await (async () => {
+        try {
+            return await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`, {
+                headers: githubToken
+                    ? {
+                        Authorization: `Bearer ${githubToken}`
+                    }
+                    : undefined
+            });
+        }
+        catch (error) {
+            core.error(`Failed to fetching the latest release page. If you are using GHE, 'github-token' should be empty. If you reach the rate limit, please set 'github-token' for 'github.com'.`);
+            throw new Error(`Fetching the latest release page (${error.message})`);
+        }
+    })();
+    if (response.status !== 200) {
+        throw new Error(`Fetching the latest release page (${response.statusText})`);
+    }
+    const data = (await response.json());
+    return data.tag_name.replace(/^v/, '');
+}
 const getDownloadBaseUrl = (version) => {
     switch (version) {
         case 'latest':

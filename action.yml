@@ -11,10 +11,10 @@ inputs:
     description: 'shellcheck version'
     required: true
     default: 'latest'
-  github_token:
+  github-token:
     description: 'GitHub token'
     required: false
-    default: ''
+    default: ${{ github.token }}
 
 runs:
   using: node20
