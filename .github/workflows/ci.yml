@@ -57,20 +57,20 @@ jobs:
         uses: ./
         with:
           version: ${{ matrix.version }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Detect cached
         uses: ./ # Check using cache by watching logs
         with:
           version: ${{ matrix.version }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: check
         run: shellcheck --version
-  test-no-token:
-    name: GitHub Actions Test (No Token)
-    # GitHub API rate limit exceeds when using macos because of https://github.com/actions/runner-images/issues/602
+  test-action-without-token:
+    name: GitHub Actions Test (without token)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./
+      - name: Install
+        uses: ./
         with:
-          version: latest
+          github-token: '' # use anonymous request
+      - name: check
+        run: shellcheck --version
