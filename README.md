@@ -20,7 +20,8 @@ jobs:
         run: shellcheck script.sh
 ```
 
-If you use self-hosted GitHub Enterprise, you should set `github-token` empty.
+If you use self-hosted GitHub Enterprise, set the specific version (`X.Y.Z`), or
+set `github-token` empty and `version: latest`.
 
 ```yaml
 jobs:
@@ -29,7 +30,12 @@ jobs:
     steps:
       - uses: pollenjp/setup-shellcheck@v1
         with:
-          github-token: ''
+          version: 0.10.0
+          #
+          #or
+          #
+          # version: latest  # 'latest' requests GitHub API (github.com)
+          # github-token: '' # Empty token may result in reaching the rate limit for anonymous requests
       - uses: actions/checkout@v4
       - name: Run shellcheck
         run: shellcheck script.sh
