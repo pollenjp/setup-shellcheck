@@ -35,7 +35,8 @@ jobs:
           #or
           #
           # version: latest  # 'latest' requests GitHub API (github.com)
-          # github-token: '' # Empty token may result in reaching the rate limit for anonymous requests
+          # github-token: '' # Empty token may result in reaching the rate limit
+          #                  # for anonymous requests
       - uses: actions/checkout@v4
       - name: Run shellcheck
         run: shellcheck script.sh
