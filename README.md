@@ -20,8 +20,8 @@ jobs:
         run: shellcheck script.sh
 ```
 
-If you use self-hosted GitHub Enterprise, set the specific version (`X.Y.Z`), or
-set `github-token` empty and `version: latest`.
+If you use GitHub Enterprise Server, set the specific version (`X.Y.Z`), or set
+`github-token` empty and `version: latest`.
 
 ```yaml
 jobs:
